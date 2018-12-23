@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "gcode.fullname" . }}
+  labels:
+    app.kubernetes.io/name: {{ include "gcode.name" . }}
+    helm.sh/chart: {{ include "gcode.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+spec:
+  ports:
+    - port: 3000
+  selector:
+    app: "{{ include "gcode.name" . }}-app"
+    tier: "{{ .Release.Name }}-rails"

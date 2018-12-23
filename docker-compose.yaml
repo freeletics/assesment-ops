@@ -1,0 +1,20 @@
+version: '3'
+services:
+  postgres:
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: toomanysecrets
+    image: postgres
+    volumes:
+      - ./tmp/db:/var/lib/postgresql/data
+  web:
+    environment:
+      DATABASE_URL: postgres
+      DATABASE_USER: postgres
+      DATABASE_PASSWORD: toomanysecrets
+      SECRET_KEY_BASE: d650181a4ede53b26a0aae54ac92f56adfcdeff2d9cefb1211b9673c3366967f2f60a77caeeb28dea31157787c86a4c4596cccce3a11fb7a9f75810ee7d14618
+    image: operationaldev/test-ops:stable
+    ports:
+      - "3000:3000"
+    depends_on:
+      - postgres

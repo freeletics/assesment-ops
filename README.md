@@ -4,6 +4,8 @@ This repo is ment to be as permanent work in progress.
 The code in this repo should be dockerizable and been run on top of
 kubernetes.
 
+For current deployment options, see DEPLOYMENT.md
+
 **What we use for operations development:
 **
 
@@ -17,7 +19,6 @@ What to achieve with this repo is to replace at least this readme in a pr with y
 in this repo. In addition a Dockerfile and a helm chart for basic usage are fine too.
 Please do not invest much time in a perfect solution. Unless you like it as a good practice.
 The result is very useful too, even it is only short brainstorming of the thoughts.
-
 
 Regarding this code....
 

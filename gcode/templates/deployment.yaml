@@ -1,0 +1,49 @@
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: {{ include "gcode.fullname" . }}
+  labels:
+    app: {{ include "gcode.name" . }}
+    chart: {{ include "gcode.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: "{{ include "gcode.name" . }}-app"
+      tier: "{{ .Release.Name }}-rails"
+  template:
+    metadata:
+      labels:
+        app: "{{ include "gcode.name" . }}-app"
+        tier: "{{ .Release.Name }}-rails"
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+          - name: DATABASE_NAME
+            value: "gorgeous-code_test"
+          - name: DATABASE_URL
+            value: "postgres"
+          - name: DATABASE_PORT
+            value: "5432"
+          - name: DATABASE_USER
+            valueFrom:
+              secretKeyRef:
+                name: "db-user"
+                key: "username"
+          - name: DATABASE_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: "db-user-pass"
+                key: "password"
+          - name: SECRET_KEY_BASE
+            valueFrom:
+              secretKeyRef:
+                name: "secret-key-base"
+                key: "secret-key-base"
+          ports:
+          - containerPort: 3000

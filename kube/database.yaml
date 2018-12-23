@@ -1,0 +1,81 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres
+  labels:
+    app: test-ops
+spec:
+  ports:
+    - port: 5432
+  selector:
+    app: test-ops
+    tier: postgres
+---
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: postgres-pv
+  labels:
+    type: local
+spec:
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/tmp/data"
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: postgres-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: postgres
+  labels:
+    app: test-ops
+spec:
+  replicas: 1
+  selector:
+    app: test-ops
+    tier: postgres
+  template:
+    metadata:
+      name: postgres
+      labels:
+        app: test-ops
+        tier: postgres
+    spec:
+      volumes:
+      - name: postgres-pv
+        persistentVolumeClaim:
+          claimName: postgres-pvc
+      containers:
+      - name: postgres
+        image: postgres
+        env:
+        - name: POSTGRES_USER
+          valueFrom:
+            secretKeyRef:
+              name: db-user
+              key: username
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: db-user-pass
+              key: password
+        - name: PGDATA
+          value: /var/lib/postgresql/data
+        ports:
+        - containerPort: 5432
+        volumeMounts:
+        - mountPath: "/var/lib/postgresql/data"
+          name: postgres-pv

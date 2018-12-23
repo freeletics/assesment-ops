@@ -1,0 +1,13 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: rails-ingress
+spec:
+  rules:
+    - host: gcode.co.za
+      http:
+        paths:
+          - backend:
+              serviceName: rails
+              servicePort: 3000
+            path: /

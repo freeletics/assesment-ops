@@ -1,0 +1,19 @@
+{{- $fullName := include "gcode.fullname" . -}}
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: {{ $fullName }}
+  labels:
+    app.kubernetes.io/name: {{ include "gcode.name" . }}
+    helm.sh/chart: {{ include "gcode.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+spec:
+  rules:
+    - host: {{ .Values.ingress.host }}
+      http:
+        paths:
+          - backend:
+              serviceName:  "{{ .Release.Name }}-{{ include "gcode.name" . }}"
+              servicePort: 3000
+            path: /
