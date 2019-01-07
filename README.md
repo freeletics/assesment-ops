@@ -1,5 +1,29 @@
 Gorgeous Code Assessment Test Operations
 =======
+
+The result:
+- The application is made parameterized as much as possible so that it can take variables from environment(secrets, configs and environment variables).
+- The application is Dockerized.
+- After setting up kubectl and Helm;
+```bash
+$ docker build -t frl-g:0.1 .
+# Push if needed
+$ cd /path/to/repo/helm-test-ops
+$ helm install --name frl .
+$ kubectl get pods
+```
+
+The progress:
+- I have used Docker for Mac both as Docker machine and Kubernetes cluster. In that way I did not have to set up a Docker registry or push image to somewhere.
+- Firstly, I had to run the application. I have started working with a Ruby container and tried to run the application. Since it is a Ruby on Rails app, I started reading some documents about Rails. The most helpful one for me is [that post on freeCodeCamp](https://medium.freecodecamp.org/lets-create-an-intermediate-level-ruby-on-rails-application-d7c6e997c63f).
+- Afterwards, I created a Docker network and started a PostgreSQL container attached to that network. I created a new Ruby container with the cloned repo directory bind-mounted and port 3000 exposed.
+- I had to make some small arrangements about Devise and Ruby versions on Gemfile and Gemfile.lock (that was the most time-consuming thing due to a bug on Devise the need of upgrading it).
+- After running the application is done, the rest was pretty straightforward. I prepared a Dockerfile with the commands that I wrote when running the application on Ruby:2.5.3 Docker image and tried to optimize its build time. I also make database configuration as environment variables.
+- A Helm package with PostgreSQL dependency is created. (It needs some improvements like getting Postgres username from its package).
+
+
+
+
 This repo is ment to be as permanent work in progress.
 The code in this repo should be dockerizable and been run on top of
 kubernetes.

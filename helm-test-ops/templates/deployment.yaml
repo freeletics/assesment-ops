@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "helm-test-ops.fullname" . }}
+  labels:
+    app.kubernetes.io/name: {{ include "helm-test-ops.name" . }}
+    helm.sh/chart: {{ include "helm-test-ops.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "helm-test-ops.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ include "helm-test-ops.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command: ["rails"]
+          args: ["s"]
+          ports:
+            - name: http
+              containerPort: {{ .Values.service.internalPort }} 
+              protocol: TCP
+          env:
+            - name: POSTGRES_HOST 
+              value: {{ template "postgresql.fullname" . }}
+            - name: SKIP_DB_WAIT
+              value: "1"
+            - name: POSTGRES_PASS 
+              valueFrom:
+                secretKeyRef:
+                  name: {{ template "postgresql.fullname" . }}
+                  key: postgresql-password
+            - name: POSTGRES_USER 
+              value: postgres
+
+            - name: SECRET_KEY_BASE
+              value: {{ .Values.secret_key_base }}
+            - name: RAILS_ENV
+              value: "production"
+          initialDelaySeconds: 60
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}

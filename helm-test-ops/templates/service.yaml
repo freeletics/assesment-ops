@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "helm-test-ops.fullname" . }}
+  labels:
+    app.kubernetes.io/name: {{ include "helm-test-ops.name" . }}
+    helm.sh/chart: {{ include "helm-test-ops.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    app.kubernetes.io/name: {{ include "helm-test-ops.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
