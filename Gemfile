@@ -22,6 +22,7 @@ gem "rails_best_practices-gorgeouscode", require: "rails_best_practices"
 gem "octokit", "~> 4.1", ">= 4.1.1"
 gem "sidekiq"
 gem "daemons"
+gem "tzinfo-data"
 
 gem "byebug"
 
