@@ -1,5 +1,34 @@
 Gorgeous Code Assessment Test Operations
 =======
+
+# What has been done:
+
+## Some general changes:
+- Added database.yml which accepts from ENV Username Password and Hostname
+- Added secrets.yml which again accepts from ENV secrets.
+- Upgraded ruby version to 2.5.3 since ruby community claims teeny version does not break backwards compatibility, only brings in bug fixes.
+
+### 1. CI
+There is a Jenkinsfile (Jenkins Pipeline with Docker Plugin) which can be executed. What it does is, it builds the container, then it runs the tests and at the end it pushes the container to Docker registry. Of course if the tests pass.
+Building is done from a Dockerfile which is setting up a new user not to run the app as root and sets timezone for easier debugging. I used alpine because I tested both alpine and ubuntu images and alpine is way smaller. 
+Tests are ran with 2 containers, one with the app and another one which runs postgresdb.
+Push is done to a registry.
+### 2. CD
+Helm chart is generated with a requirements.yml to get postgres database. I use secrets exposed by postgres helm chart.
+### 3. Local development
+When you change the code you can just do ```docker buid -t <your tag> . ``` to build the container. Then you do ```docker run -p 3000:300 <containerID> rails server``` to run the app. 
+You can use a named containers to connect to a database which you have locally as a docker container.
+Once you are done with the change you can commit it and then Jenkins will take over.
+## Helm deployment and minikube.
+If you want to run the application in minikube, you just need to do ```helm install test-ops-deployment``` after you pushed the container to your private registry. This will spin up both the app and postgres DB in your minikube.
+If you already have it running, you can do ```helm install --upgrade test-ops-deployment```
+## What can be improved
+- Adding logging as a DaemonSet 
+- Adding prometheus endpoint to be available for scraping.
+- Play around with different number of replicas to see which one fits the best with traffic we are getting. Also play around with resource consumption to optimize the app and resources.
+- Use ingress if you want to expose it as just a resource and share domain name?
+- Make postgres username configurable
+
 This repo is ment to be as permanent work in progress.
 The code in this repo should be dockerizable and been run on top of
 kubernetes.

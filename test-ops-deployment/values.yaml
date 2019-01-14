@@ -1,0 +1,44 @@
+# Default values for test-ops-deployment.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 2
+
+image:
+  repository: saleee011/ruby-alpine
+  tag: latest
+  pullPolicy: IfNotPresent
+
+nameOverride: ""
+fullnameOverride: ""
+
+service:
+  # For minikube its easier to run it as a NodeIP while in Production or Staging it should either be LoadBalancer or ClusterIP. 
+  # This can be overridden by --set when running helm 
+  name: http
+  type: NodePort 
+  externalPort: 80
+  internalPort: 3000
+  port: 80
+
+ingress:
+  enabled: false
+  annotations: {}
+
+resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #  cpu: 100m
+  #  memory: 128Mi
+  # requests:
+  #  cpu: 100m
+  #  memory: 128Mi
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
