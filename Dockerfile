@@ -15,6 +15,5 @@ WORKDIR /app
 COPY --chown=freeletics:freeletics Gemfile* /app/
 RUN bundle install
 COPY --chown=freeletics:freeletics . /app/
-RUN chown freeletics:freeletics -R /app/
 USER freeletics
 
