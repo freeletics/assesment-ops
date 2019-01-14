@@ -1,12 +1,11 @@
 default: &default
   adapter: postgresql
-  host: postgresdb
   endcoding: utf8
   pool: 5
   timeout: 5000
-  username: 'postgres'
-  password: 'mysecretpassword'
-
+  host: <%= ENV['DATABASE_URL'] %>
+  username: <%= ENV['DATABASE_USER'] %>
+  password: <%= ENV['DATABASE_PASSWORD'] %>
 development:
   <<: *default
   database: gorgeous-code_development
