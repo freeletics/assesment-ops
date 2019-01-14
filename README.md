@@ -22,12 +22,13 @@ Once you are done with the change you can commit it and then Jenkins will take o
 ## Helm deployment and minikube.
 If you want to run the application in minikube, you just need to do ```helm install test-ops-deployment``` after you pushed the container to your private registry. This will spin up both the app and postgres DB in your minikube.
 If you already have it running, you can do ```helm install --upgrade test-ops-deployment```
+This will give you a postgres database also. in production I would not use it like this, I would either have a postgres cluster running or (my prefered way) have a hosted DB. Then we would not worry about security patches and updates of the DB.
 ## What can be improved
 - Adding logging as a DaemonSet 
 - Adding prometheus endpoint to be available for scraping.
 - Play around with different number of replicas to see which one fits the best with traffic we are getting. Also play around with resource consumption to optimize the app and resources.
 - Use ingress if you want to expose it as just a resource and share domain name?
-- Make postgres username configurable
+- Make postgres username configurable and create real 
 
 This repo is ment to be as permanent work in progress.
 The code in this repo should be dockerizable and been run on top of

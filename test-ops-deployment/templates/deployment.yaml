@@ -35,6 +35,14 @@ spec:
           env:
             - name: DATABASE_URL 
               value: {{ .Release.Name }}-postgresql
+            - name: RUBY_ENV
+              value: prod
+            # Here should be a secret in the cluster
+            - name: SECRET_KEY_BASE
+              valueFrom:
+                secretKeyRef:
+                  name: rails-app
+                  key: secret-key
             - name: DATABASE_USER 
               value: postgres
             - name: DATABASE_PASSWORD 
@@ -42,9 +50,9 @@ spec:
                 secretKeyRef:
                   name: {{ .Release.Name }}-postgresql
                   key: postgresql-password
+            # User needs to be also parametrized.
             - name: POSTGRES_USER 
               value: postgres
-
             - name: SECRET_KEY_BASE
               value: {{ .Values.secret_key_base }}
             - name: RAILS_ENV

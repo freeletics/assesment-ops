@@ -2,7 +2,7 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-replicaCount: 2
+replicaCount: 1
 
 image:
   repository: saleee011/ruby-alpine
@@ -17,19 +17,16 @@ service:
   # This can be overridden by --set when running helm 
   name: http
   type: NodePort 
-  externalPort: 80
-  internalPort: 3000
-  port: 80
+  port: 3000
+  nodePort: 30000
 
 ingress:
   enabled: false
   annotations: {}
 
 resources: {}
-  # We usually recommend not to specify default resources and to leave this as a conscious
-  # choice for the user. This also increases chances charts run on environments with little
-  # resources, such as Minikube. If you do want to specify resources, uncomment the following
-  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # This is not good to leave it like this since then if we have a memory leak we would create a lot of issues
+  # and potentially bring down the whole cluster. More in README.md
   # limits:
   #  cpu: 100m
   #  memory: 128Mi
