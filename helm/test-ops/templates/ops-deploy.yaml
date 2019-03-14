@@ -20,26 +20,25 @@ spec:
         release: {{ .Release.Name }}
     spec:
       initContainers:
-      - name: init-container
+      - name: "init-container"
         image: {{ .Values.initContainerImage | quote }}
         env:
         {{- if .Values.postgresql.enabled }}
         - name: POSTGRES_USER
-          value: {{ .Values.postgresql.postgresUser }}
+          value: {{ .Values.postgresql.postgresUser | quote }}
         - name: POSTGRESS_PASSWORD
           valueFrom:
             secretKeyRef:
               name: {{ .Release.Name }}-postgresql
-              key: postgres-password
+              key: postgresql-password
         - name: POSTGRESS_DB
-          value: {{ .Values.postgresql.postgresDatabase }}
-        {{- else }}
-        - name: POSTGRESS_URL
-          value: {{ .Values.global.postgresqlUrl }}
+          value: {{ .Values.postgresql.postgresDatabase | quote }}
         {{- end }}
       containers:
-      - name: {{ .Values.ops-app.name }}
-        image: {{ .Values.ops-app.image }}:{{ .Values.ops-app.image-tag }}
-        imagePullPolicy: {{ .Values.imagePullPolicy }}
+      - name:  {{ .Values.opsApp.name | quote }}
+        image: {{ .Values.opsApp.image }}:{{ .Values.opsApp.imageTag }}
+        imagePullPolicy: {{ .Values.imagePullPolicy | quote }}
+        ports:
+        - containerPort: {{ .Values.opsApp.internalPort }}
         resources:
-{{ toYaml .Values.ops-app.resources | indent 10 }}
+{{ toYaml .Values.opsApp.resources | indent 10 }}

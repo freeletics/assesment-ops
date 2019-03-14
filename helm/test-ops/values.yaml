@@ -10,10 +10,12 @@ initContainerImage: "alpine:3.6"
 imagePullSecrets:
 
 # app
-ops-app:
-  name: "test-ops"
+opsApp:
+  name: test-ops
   image: "gorgeous-code"
-  image-tag: "tag1"
+  imageTag: "tag1"
+  internalPort: "8888"
+  externalPort: "8888"
   resources: {}
   #  requests:
   #    memory: "1Gi"
