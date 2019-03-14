@@ -44,3 +44,27 @@ Regarding this code....
 ## Installation and other notes
 * If you have errors with the gem `eventmachine` maybe this solution helps <https://stackoverflow.com/questions/30818391/gem-eventmachine-fatal-error-openssl-ssl-h-file-not-found>
 * Check if you "/usr/locpsql -U postgres -h localhost" works, the gc.yml from the projects will probably create databases
+
+## Development Workflow
+* feel free to improve the code and run it localy, for this you need to run following next steps
+
+**Requirements: 
+* [Docker Daemon](https://docs.docker.com/install/),  installed on your local machine
+* [Minikube](https://github.com/kubernetes/minikube) to represent the kubernetes we use
+* [Helm Package Manager](https://github.com/kubernetes/helm) to package the kubernetes manifests
+
+1. To be able to work with the docker daemon on your mac/linux host use the docker-env command in your shell:
+```bash
+eval $(minikube docker-env)
+```
+    In this way, you don't need to push any docker image on the DockerHub, you can access the minikube Docker Daemon for building images
+2. build the Docker image in the minikube VM with following command
+```bash
+docker -t gorgeous-code:tag1 .
+
+##test if it works
+docker images
+````
+4. you can iterate over this every time you change something in the code you need a new Docker image
+
+5. move on to the [helm chart](./helm), to deploy the application into Kubernetes minikube
