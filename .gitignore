@@ -169,3 +169,6 @@ fabric.properties
 !.vscode/extensions.json
 
 # End of https://www.gitignore.io/api/ruby,rails,rubymine,visualstudiocode
+
+# Chart dependencies for subcharts, you should run helm dependency update for getting the subcharts
+**/charts/*.tgz
