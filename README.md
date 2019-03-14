@@ -53,11 +53,12 @@ Regarding this code....
 * [Minikube](https://github.com/kubernetes/minikube) to represent the kubernetes we use
 * [Helm Package Manager](https://github.com/kubernetes/helm) to package the kubernetes manifests
 
-1. To be able to work with the docker daemon on your mac/linux host use the docker-env command in your shell:
+1. To be able to work with the minikube VM docker daemon on your mac/linux host, use the docker-env command in your shell:
 ```bash
 eval $(minikube docker-env)
 ```
-    In this way, you don't need to push any docker image on the DockerHub, you can access the minikube Docker Daemon for building images
+**In this way, you don't need to push any docker image on the DockerHub, you can access the minikube Docker Daemon for building images**
+
 2. build the Docker image in the minikube VM with following command
 ```bash
 docker -t gorgeous-code:tag1 .
@@ -65,6 +66,6 @@ docker -t gorgeous-code:tag1 .
 ##test if it works
 docker images
 ````
-4. you can iterate over this every time you change something in the code you need a new Docker image
+4. you can iterate over this every time you change something in the code or you need a new Docker image
 
 5. move on to the [helm chart](./helm), to deploy the application into Kubernetes minikube
