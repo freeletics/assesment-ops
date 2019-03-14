@@ -1,0 +1,45 @@
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: {{ template "ops.fullname" . }}
+  labels:
+    app: {{ template "ops.name" . }}
+    chart: {{ template "ops.chart" . }}
+    heritage: {{ .Release.Service }}
+    release: {{ .Release.Name }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ template "ops.name" . }}
+      release: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ template "ops.name" . }}
+        release: {{ .Release.Name }}
+    spec:
+      initContainers:
+      - name: init-container
+        image: {{ .Values.initContainerImage | quote }}
+        env:
+        {{- if .Values.postgresql.enabled }}
+        - name: POSTGRES_USER
+          value: {{ .Values.postgresql.postgresUser }}
+        - name: POSTGRESS_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Release.Name }}-postgresql
+              key: postgres-password
+        - name: POSTGRESS_DB
+          value: {{ .Values.postgresql.postgresDatabase }}
+        {{- else }}
+        - name: POSTGRESS_URL
+          value: {{ .Values.global.postgresqlUrl }}
+        {{- end }}
+      containers:
+      - name: {{ .Values.ops-app.name }}
+        image: {{ .Values.ops-app.image }}:{{ .Values.ops-app.image-tag }}
+        imagePullPolicy: {{ .Values.imagePullPolicy }}
+        resources:
+{{ toYaml .Values.ops-app.resources | indent 10 }}

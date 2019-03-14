@@ -1,0 +1,9 @@
+##requiremnts.yaml
+##chart from
+##https://github.com/helm/charts/tree/master/stable/postgresql
+dependencies:
+- name: postgresDB
+  version: 0.8.7
+  repository: https://kubernetes-charts.storage.googleapis.com/
+#repository: https://github.com/helm/charts/tree/master/stable/postgresql
+  condition: postgres.enabled

@@ -1,0 +1,46 @@
+# Default values for Test-Ops.
+# This is a YAML-formatted file.
+# Beware when changing values here. You should know what you are doing!
+# Access the values with {{ .Values.key.subkey }}
+
+# Common
+replicaCount: 1
+imagePullPolicy: IfNotPresent
+initContainerImage: "alpine:3.6"
+imagePullSecrets:
+
+# app
+ops-app:
+  name: "test-ops"
+  image: "gorgeous-code"
+  image-tag: "tag1"
+  resources: {}
+  #  requests:
+  #    memory: "1Gi"
+  #    cpu: "100m"
+  #  limits:
+  #    memory: "2Gi"
+#    cpu: "1"
+
+# PostgreSQL
+## Configuration values for the postgresql dependency
+## ref: https://github.com/kubernetes/charts/blob/master/stable/postgresql/README.md
+##
+postgresql:
+  enabled: true
+  postgresDatabase: "opsdb"
+  postgresUser: "ops"
+  postgresPassword: "superdupers3cret"
+  service:
+    port: 5432
+  persistence:
+    enabled: true
+    size: "10Gi"
+    existingClaim:
+  resources:
+    requests:
+      memory: "1Gi"
+      cpu: "250m"
+    limits:
+      memory: "2Gi"
+      cpu: "1"

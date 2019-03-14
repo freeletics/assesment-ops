@@ -1,0 +1,9 @@
+apiVersion: v1
+name: test-ops
+version: 0.1.0
+home: https://github.com/freeletics/test-ops
+description: will scan git projects
+keywords:
+- git
+- ops
+- helm
