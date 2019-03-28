@@ -32,7 +32,7 @@ postgresql:
   enabled: true
   postgresDatabase: "opsdb"
   postgresUser: "ops"
-  postgresPassword: "superdupers3cret"
+  postgresqlPassword: "superdupers3cret"
   service:
     port: 5432
   persistence:
