@@ -7,7 +7,15 @@
 ## Chart Details
 This chart will do the following:
 
-* deploy PostgreSQL as a subchart and make the environment variables visible to the  application chart, following the DRY principles 
+* deploy PostgreSQL as a subchart and make the environment variables visible to the  application chart, following the [DRY principles](https://de.wikipedia.org/wiki/Don%E2%80%99t_repeat_yourself)
+* Following  Environment Variables will be visible to the app Pod over an [init container](https://kubernetes.io/docs/concepts/workloads/pods/init-containers/)
+```bash
+Environment variables:
+POSTGRES_USER: ops
+POSTGRESS_PASSWORD (ovirun-postgresql):   visibility
+POSTGRESS_DB: opsdb
+```
+The app Pod will make them visible and take them from the postgresql chart, following the [DRY principle](https://de.wikipedia.org/wiki/Don%E2%80%99t_repeat_yourself), and you don't need to write secrets in git or in config files. This env variables can be referenced in the app over env variables!
 
 ## Requirements
 - A running Kubernetes cluster
