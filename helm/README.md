@@ -15,7 +15,7 @@ POSTGRES_USER: ops
 POSTGRESS_PASSWORD (ovirun-postgresql):   visibility
 POSTGRESS_DB: opsdb
 ```
-The app Pod will make them visible and take them from the postgresql chart, following the [DRY principle](https://de.wikipedia.org/wiki/Don%E2%80%99t_repeat_yourself), and you don't need to write secrets in git or in config files. This env variables can be referenced in the app over env variables!
+The app Pod will make them visible and take them from the postgresql chart, following the [DRY principle](https://de.wikipedia.org/wiki/Don%E2%80%99t_repeat_yourself), and you don't need to write secrets in git or in config files. This env variables can be referenced in the app container!
 
 ## Requirements
 - A running Kubernetes cluster
