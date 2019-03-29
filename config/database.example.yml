@@ -1,11 +1,11 @@
 default: &default
   adapter: postgresql
-  host: localhost
+  host: <%= ENV["DBHOST"] %>
   endcoding: utf8
   pool: 5
   timeout: 5000
-  # username: 'miguel'
-  # password: 'password'
+  username: <%= ENV["DBUSER"] %>
+  password: <%= ENV["DBPWD"] %>
 
 development:
   <<: *default
