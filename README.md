@@ -44,3 +44,52 @@ Regarding this code....
 ## Installation and other notes
 * If you have errors with the gem `eventmachine` maybe this solution helps <https://stackoverflow.com/questions/30818391/gem-eventmachine-fatal-error-openssl-ssl-h-file-not-found>
 * Check if you "/usr/locpsql -U postgres -h localhost" works, the gc.yml from the projects will probably create databases
+
+# Notes
+
+My task from the ops team was to compose a readme of my approach to the deployment of this ruby on rails app. As I do not have much practical experience with the tools, I decided to write my thoughts rather than submitting unworking/unfinished code, at a high level.
+
+The app environment is defined in the Dockerfile.
+I used a docker compose file to test the most basic services needed to run the app - in this case I just have a postgresql db.
+So docker compose can create and start a running containerized app on a single host.
+
+```
+docker-compose build
+docker-compose up
+```
+
+The next step is to start up minikube VM allowing a local kubernetes dev cluster.
+
+```
+minikube start
+kubectl config use-context minikube
+eval $(minikube docker-env)
+```
+
+From here I can test deployment of the docker container, specifying the locally built image
+
+```
+docker build -t test-ops:0.0.1 .
+kubectl run test-op1s --image=test-ops:0.0.1 --port=3000 --image-pull-policy=Never
+```
+
+Now we have a pod, and can expose the app by specifying the NodePort as minikube cannot use a loadbalancer
+
+```
+kubectl expose deployment test-ops --type=NodePort --name=ext_test_ops
+```
+
+The next steps are to create a Chart to make this deployment straightforward and repeatable.
+Helm charts take out the need to run kubectl commands, making it clear to kubernetes the deployment
+and management of clusters (minikube only one cluster).
+
+This begins the development workflow, changes to the app, result in changes to the image, which is deployed for testing.
+Having a CI tool plugin to kubernetes for automated testing will give this workflow pratical use.
+
+Minikube would be replaced by a complete kubernetes deployment in a staging and production setting. The database would be changed to a managaged db from the cloud, i.e. AWS RDS.
+
+Charts can be used to handle scaling, upgrading, aswell as deployment strategies as needed, blue/green for example.
+
+In an ideal world this entire process would be initiated via git branches, merges and tags.
+
+As this was time limited, spending some proper time using the tools and familiarising myself with the workflow would give me a deeper understanding. I learn well by use, trial and error. Put in a business context I would learn fast and put in time upskilling.
