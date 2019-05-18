@@ -53,4 +53,6 @@ Rails.application.configure do
   #config.active_job.queue_adapter = :inline
 
   config.action_mailer.default_url_options = { host: "localhost", port: 3000 }
+
+  config.web_console.permissions = '172.18.0.0/16'
 end

@@ -125,8 +125,8 @@ GEM
     erubis (2.7.0)
     eventmachine (1.2.5)
     execjs (2.7.0)
-    factory_girl (4.9.0)
-      activesupport (>= 3.0.0)
+    factory_bot (5.0.2)
+      activesupport (>= 4.2.0)
     faraday (0.12.2)
       multipart-post (>= 1.2, < 3)
     ffi (1.9.23)
@@ -364,7 +364,7 @@ DEPENDENCIES
   capybara-email (~> 2.4.0)
   colorize
   daemons
-  factory_girl
+  factory_bot
   formtastic (> 3.0)
   haml
   hirb (~> 0.7.3)
@@ -390,7 +390,7 @@ DEPENDENCIES
   woodlock!
 
 RUBY VERSION
-   ruby 2.5.0p0
+   ruby 2.5.5p157
 
 BUNDLED WITH
-   1.16.1
+   1.17.3

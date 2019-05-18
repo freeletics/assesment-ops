@@ -1,6 +1,6 @@
 source "https://rubygems.org"
 
-ruby "2.5.0"
+ruby "2.5.5"
 
 gem 'rails', '>= 5.2.0.rc2'
 gem 'activeadmin'
@@ -15,7 +15,7 @@ gem "jbuilder", "~> 2.5"
 gem "sdoc", "~> 0.4.0", group: :doc
 gem "thin"
 gem "haml"
-gem "factory_girl"
+gem "factory_bot"
 gem "hirb", "~> 0.7.3"
 gem "formtastic", "> 3.0"
 gem "rails_best_practices-gorgeouscode", require: "rails_best_practices"
