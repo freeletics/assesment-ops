@@ -1,0 +1,29 @@
+@import 'https://fonts.googleapis.com/icon?family=Material+Icons'
+@import 'https://fonts.googleapis.com/css?family=Courgette'
+@import "materialize/components/color-variables"
+$primary-color: color("blue-grey", "darken-2") !default
+$secondary-color: color("pink", "darken-1") !default
+@import materialize
+@import formtastic
+@import svg-model-diagram
+@import svg-code-coverage-diagram
+@import reports
+
+
+body
+  display: flex
+  min-height: 100vh
+  flex-direction: column
+
+.brand-logo
+  font-family: 'Courgette', cursive
+
+
+.analysed-padding
+  padding: 1.5em
+
+.no-padding
+  padding: 0
+
+a:hover
+  text-decoration: none

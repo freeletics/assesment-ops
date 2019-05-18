@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Gorgeous Code</title>
+  <!--Let browser know website is optimized for mobile-->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+  <%= csrf_meta_tags %>
+  <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': true %>
+  <%= javascript_include_tag 'application', 'data-turbolinks-track': true %>
+  <%= javascript_include_tag 'd3.v3' %>
+</head>
+<body>
+  <%= render 'layouts/navbar_top' %>
+  <div class="row"></div>
+  <div class="container container-main">
+    <% flash.each do |message_type, message| %>
+      <%= javascript_tag "M.toast({html: '#{message}', displayLength: 5000, classes: 'pink'})" %>
+    <% end %>
+    <%= yield %>
+    <%= javascript_include_tag 'd3-logic' %>
+  </div>
+
+  <%= render 'layouts/footer' %>
+</body>
+</html>

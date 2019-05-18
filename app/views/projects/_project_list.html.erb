@@ -1,0 +1,69 @@
+<div class="row">
+  <% if existing_projects.present? %>
+  <div class="col s12 l6">
+    <div class="collection with-header">
+      <div class="collection-header"><h4>Your Repositories</h4></div>
+      <% existing_projects.each do |project| %>
+      <%= link_to show_last_report_path(project.github_owner, project.github_name), class: "collection-item" do %>
+
+      <% unless project.has_last_report_analyses %>
+      <span class="new badge blue-grey darken-2" data-badge-caption="WAITING TO BE ANALYSE"></span>
+      <% end %>
+      <span class="blue-grey-text text-darken-2">
+        <i class="material-icons left"><%= project.github_private ? 'lock' : 'public' %></i>
+        <%= project.github_owner %>/<%= project.github_name %>
+      </span>
+
+      <% end %>
+      <% end %>
+    </div>
+  </div>
+  <% end %>
+
+  <% if @latest_public_analysed_projects.present? %>
+  <div class="col s12 <%='l6' if existing_projects.present? %>">
+    <div class="collection with-header">
+      <div class="collection-header"><h4>Latest Public Repositories</h4></div>
+      <% @latest_public_analysed_projects.each do |project| %>
+      <%= link_to show_last_report_path(project.github_owner, project.github_name), class: "collection-item" do %>
+
+      <% unless project.has_last_report_analyses %>
+      <span class="new badge blue-grey darken-2" data-badge-caption="WAITING TO BE ANALYSE"></span>
+      <% end %>
+      <span class="blue-grey-text text-darken-2">
+        <i class="material-icons left"><%= project.github_private ? 'lock' : 'public' %></i>
+        <%= project.github_owner %>/<%= project.github_name %>
+      </span>
+
+      <% end %>
+      <% end %>
+    </div>
+  </div>
+  <% end %>
+</div>
+
+<% if missing_projects.present? %>
+<div class="row">
+  <div class="col s12">
+    <ul class="collection with-header">
+      <li class="collection-header"><h4>Analyse Your Github Repositories</h4></li>
+      <% missing_projects.each do |project| %>
+      <li class="collection-item">
+
+        <div>
+          <span class="blue-grey-text text-darken-2">
+            <i class="material-icons left"><%= project[:github_private] ? 'lock' : 'public' %></i>
+            <%= project[:github_owner] %>/<%= project[:github_name] %>
+          </span>
+          <%= form_for @project, html: { class: "secondary-content" } do |f| %>
+          <%= f.hidden_field :github_url, value: project[:svn_url] %>
+          <%= f.submit "Add Repository", class: "btn btn-small" %>
+          <% end %>
+        </div>
+
+      </li>
+      <% end %>
+    </ul>
+  </div>
+</div>
+<% end %>

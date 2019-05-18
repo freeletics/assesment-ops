@@ -1,0 +1,9 @@
+<div class="row">
+  <div class="col s12">
+    <%= render "search_project_form" %>
+  </div>
+</div>
+
+<%= render "searched_projects", searched_projects: @searched_projects %>
+<%= render "add_project_on_blank_search", searched_projects: @searched_projects, project: @project %>
+<%= render "project_list", existing_projects: @existing_projects, missing_projects: @missing_projects %>
