@@ -44,7 +44,11 @@ Most obvious things to fix in order:
 - InitContainer: wait for the database to be up, or handle this inside the app.
 - Add CI/CD Pipeline
 
-  <Helm Charts are very complex in feature so this could be extended more and more, but these are some things that need to be done off the top of my head>
+  <Helm Charts can be very complex so this could be extended more and more, but these are some things that need to be done off the top of my head>
+
+ Deployments folder + entrypoint.sh contains my work. I've also changed some settings slightly.
+
+
 ### TODOs:
 
 
