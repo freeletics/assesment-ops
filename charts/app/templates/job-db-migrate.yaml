@@ -1,0 +1,40 @@
+{{ if .Values.dbMigrate.render }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ printf "%s-%s" "app-db-migrate" (randAlphaNum 10) }}
+  labels:
+    app: app
+spec:
+  template:
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 10 }}
+      {{- end }}
+      restartPolicy: OnFailure
+      containers:
+      - name: app-db-migrate
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        command:
+        - /bin/sh
+        - -c
+        - "rake db:migrate"
+        env:
+          {{- toYaml .Values.env | nindent 8 }}
+        volumeMounts:
+        - name: app-database-secret
+          mountPath: /app/config/database.yml
+          subPath: database.yml
+        - name: app-devise-secret
+          mountPath: /app/config/initializers/devise.rb
+          subPath: devise.rb
+      volumes:
+      - name: app-database-secret
+        secret:
+          secretName: app-database-secret
+      - name: app-devise-secret
+        secret:
+          secretName: app-devise-secret
+{{ end }}
