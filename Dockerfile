@@ -23,5 +23,4 @@ RUN cd /tmp && \
 WORKDIR /opt/gorgeous-code-assessment
 COPY . /opt/gorgeous-code-assessment
 
-# RUN rake assets:precompile
 CMD ["rails", "server", "-b", "0.0.0.0"]

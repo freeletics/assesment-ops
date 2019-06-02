@@ -1,0 +1,10 @@
+apiVersion: v1
+appVersion: "1.0.0"
+description: >
+  A Ggrgeous Helm chart to deploy the 
+  gorgeous code assessment in Kubernetes
+name: gorgeous-code-assessment
+version: 0.1.0
+
+image: "{{ .Values.image.repository }}:{{ default .Chart.AppVersion .Values.image.tag }}" # TODO: validate
+icon: https://cdn.freeletics.com/assets/main/images/training-icon-0a2e21fc31da6b813697ef96e22b644f.svg

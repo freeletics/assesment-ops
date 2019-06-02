@@ -6,7 +6,7 @@ jobs:
     docker:
       - image: docker:stable
     environment:
-      APP_NAME: gourgeous-code-assessment
+      APP_NAME: gorgeous-code-assessment
     steps:
       - checkout
       - setup_remote_docker # avoids Docker-in-docker errors
