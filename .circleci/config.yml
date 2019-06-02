@@ -1,0 +1,49 @@
+---
+version: 2
+
+jobs:
+  build:
+    docker:
+      - image: docker:stable
+    environment:
+      APP_NAME: gourgeous-code-assessment
+    steps:
+      - checkout
+      - setup_remote_docker # avoids Docker-in-docker errors
+      - restore_cache:
+          keys:
+            - ${APP_NAME}-v1-{{ .Branch }}
+          paths:
+            - /caches/${APP_NAME}.tar
+
+      - run:
+          name: Install dependencies at host
+          command: |
+            apk add make
+
+      - run:
+          name: Load the docker image layers cached
+          command: |
+            make CACHE_DIR=/caches load-docker-image
+
+      - run:
+          name: Build application Docker image
+          command: |
+            make docker
+
+      - run:
+          name: Run Docker save to cache image layers
+          command: |
+            mkdir -p /caches
+            make CACHE_DIR=/caches save-docker-image
+
+      - save_cache:
+          key: ${APP_NAME}-v1-{{ .Branch }}
+          paths:
+            - /caches/${APP_NAME}.tar
+
+workflows:
+  version: 2
+  build:
+    jobs:
+    - build
