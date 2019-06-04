@@ -4,6 +4,7 @@ APP_NAME := gorgeous-code-assessment
 DOCKER_IMAGE_VERSION := latest
 
 ENV := development
+MIGRATION_STRATEGY := initContainer
 
 REMOTE_REGISTRY := docker.io
 REMOTE_USERNAME := macunha1
@@ -54,5 +55,7 @@ helm-lint:
 helm:
 	# helm install --dep-up --replace ${PWD}/ops/${APP_NAME}
 	helm upgrade --install ${APP_NAME}-${ENV} "${PWD}/ops/${APP_NAME}" \
+		--set image.repository="${REMOTE_REGISTRY}/${REMOTE_USERNAME}/${APP_NAME}" \
+		--set database.migrationStrategy="${MIGRATION_STRATEGY}" \
 		--set application.environment="${ENV}" \
 		--namespace ${ENV} # Isolating namespaces by environment

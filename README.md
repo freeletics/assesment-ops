@@ -1,28 +1,97 @@
 Gorgeous Code Assessment Test Operations
 =======
 This repo is ment to be as permanent work in progress.
-The code in this repo should be dockerizable and been run on top of
-kubernetes.
 
-**What we use for operations development:
-**
+# Requirements
 
-[Minikube](https://github.com/kubernetes/minikube) to represent the kubernetes we use
+What we use for operations development:
 
-[Helm Package Manager](https://github.com/kubernetes/helm) to package the kubernetes manifests
-
-[Charts](https://github.com/kubernetes/charts) for public available components someone may need in addition on kubernetes.
-
-What to achieve with this repo is to replace at least this readme in a pr with your thoughts how to handle the deployment of the app
-in this repo. In addition a Dockerfile and a helm chart for basic usage are fine too.
-Please do not invest much time in a perfect solution. Unless you like it as a good practice.
-The result is very useful too, even it is only short brainstorming of the thoughts.
+* [Minikube](https://github.com/kubernetes/minikube) to represent the kubernetes we use
+* [Helm Package Manager](https://github.com/kubernetes/helm) to package the kubernetes manifests
+* [Charts](https://github.com/kubernetes/charts) for public available components someone may need in addition on kubernetes.
 
 
-Regarding this code....
+# Quickstart
 
+To setup your gourgeous environment all you have to do is:
 
-## Most relevant entities overview:
+If it's necessary to init the `helm` and configure `tiller` in minikube:
+```bash
+make helm-setup # Then wait some time for tiller pod to come up
+```
+
+And just fire!
+```bash
+make helm
+```
+
+This will download the remote image from Docker hub and release in Kubernetes
+
+## Setting up another environment
+
+By default it will use development for environment, if you want to deploy somewhere else, just pass it through
+```bash
+make ENV=somewhere helm # "somewhere" must exist in our rails envs
+```
+
+## Getting image from another registry
+
+There's parameters to set the `helm` remote registry, user, image name and some other configurations.
+You can see it all in [Makefile](Makefile)
+
+```bash
+make REMOTE_REGISTRY=top.private.com \
+    REMOTE_USERNAME=janedoe \
+    APP_NAME=another-gorgeous-code \
+    helm
+```
+
+## Installing the database in a different release
+
+It's useful if you want to deattach this database release from the gourgeous app
+```bash
+make helm-db
+```
+
+# Build and update
+
+To upgrade this code and maintain it, these instructions should be helpful
+
+## Docker build
+
+We also have a gourgeous command to build docker, guess what?
+
+```bash
+make docker
+```
+
+To change the configurations, like registry and username (same in Getting from another registry...):
+```bash
+make REMOTE_REGISTRY=top.private.com \
+    REMOTE_USERNAME=janedoe \
+    docker
+```
+
+## Running tests inside docker
+
+```bash
+make tests
+```
+
+## Docker publish in registry
+
+```bash
+make docker-push
+```
+
+Accept the same parameters (here comes janedoe again!):
+```bash
+make REMOTE_REGISTRY=top.private.com \
+    REMOTE_USERNAME=janedoe \
+    docker-push
+```
+
+## Most relevant entities overview
 
 ### Models
 * Project: has the git information about each project
