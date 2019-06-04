@@ -5,6 +5,7 @@ DOCKER_IMAGE_VERSION := latest
 
 ENV := development
 MIGRATION_STRATEGY := initContainer
+DEVISE_SECRET := topsecret
 
 REMOTE_REGISTRY := docker.io
 REMOTE_USERNAME := macunha1
@@ -57,5 +58,6 @@ helm:
 	helm upgrade --install ${APP_NAME}-${ENV} "${PWD}/ops/${APP_NAME}" \
 		--set image.repository="${REMOTE_REGISTRY}/${REMOTE_USERNAME}/${APP_NAME}" \
 		--set database.migrationStrategy="${MIGRATION_STRATEGY}" \
+		--set devise.secretKey="${DEVISE_SECRET}" \
 		--set application.environment="${ENV}" \
 		--namespace ${ENV} # Isolating namespaces by environment

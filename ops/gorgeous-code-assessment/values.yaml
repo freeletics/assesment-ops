@@ -41,7 +41,7 @@ postgresql:
       postgresqlDatabase: gorgeous-db
 
 devise:
-  # XXX: Don't do it, use a secret instead
+  # XXX: Don't do it, overwrite this value through parameter --set ...
   secretKey: topsecret
 
 ingress:

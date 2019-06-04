@@ -9,7 +9,9 @@ What we use for operations development:
 * [Minikube](https://github.com/kubernetes/minikube) to represent the kubernetes we use
 * [Helm Package Manager](https://github.com/kubernetes/helm) to package the kubernetes manifests
 * [Charts](https://github.com/kubernetes/charts) for public available components someone may need in addition on kubernetes.
+* [Make](https://www.gnu.org/software/make/) to wrap build and release
 
+Attention! MacOS by default uses BSD Make which has a slightly different syntax from GNU Make. Please, use GNU or CMake to run `make`.
 
 # Quickstart
 
@@ -25,13 +27,26 @@ And just fire!
 make helm
 ```
 
-This will download the remote image from Docker hub and release in Kubernetes
+This will download the remote image from Docker hub and release in Kubernetes.
+
+A init container will execute the database setup (if necessary) and then a gourgeous pod will receive your requests :D
 
 ## Setting up another environment
 
 By default it will use development for environment, if you want to deploy somewhere else, just pass it through
 ```bash
 make ENV=somewhere helm # "somewhere" must exist in our rails envs
+```
+
+To change the devise secret, generating one:
+```bash
+make DEVISE_SECRET=$(uuidgen | md5sum)
+```
+
+You can also shift between job and initContainer strategy to configure the database setup (migrations + creation):
+
+```bash
+make MIGRATION_STRATEGY=job helm
 ```
 
 ## Getting image from another registry
@@ -90,6 +105,12 @@ make REMOTE_REGISTRY=top.private.com \
     REMOTE_USERNAME=janedoe \
     docker-push
 ```
+
+# Then...
+
+Just mix the desired [Makefile](Makefile) parameters to match your requirements :D
+
+# About the app
 
 ## Most relevant entities overview
 
