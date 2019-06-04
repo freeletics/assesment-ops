@@ -20,6 +20,36 @@ spec:
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
     {{- end }}
+    {{- if eq .Values.database.migrationStrategy "initContainer" }}
+      initContainers:
+        - name: "{{ .Chart.Name }}-db-setup"
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command:
+            - /bin/sh
+            - -c
+            - 'rake db:exists && rake db:migrate || rake db:setup'
+          env:
+            - name: RAILS_ENV
+              value: {{ .Values.application.environment }}
+            - name: POSTGRES_PASSWORD # Avoids failure doe to the trailing char
+              # Ref: https://github.com/docker-library/postgres/issues/308#issuecomment-371587622
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "gorgeous-code-assessment.postgresql.fullname" . }}
+                  key: postgresql-password
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+            - name: database-credentials
+              mountPath: "{{ .Values.workDir }}/config/database.yml"
+              readOnly: true
+              subPath: database.yml
+            - name: devise-key
+              mountPath: "{{ .Values.workDir }}/config/initializers/devise.rb"
+              readOnly: true
+              subPath: devise.rb
+    {{- end }}
       containers:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
@@ -37,14 +67,14 @@ spec:
             - name: http
               containerPort: {{ .Values.service.internalPort }}
               protocol: TCP
-          # livenessProbe:
-          #   httpGet:
-          #     path: /
-          #     port: http
-          # readinessProbe:
-          #   httpGet:
-          #     path: /
-          #     port: http
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           volumeMounts:

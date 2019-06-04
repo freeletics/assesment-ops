@@ -6,7 +6,7 @@ replicaCount: 1
 image:
   repository: macunha1/gorgeous-code-assessment
   tag: latest
-  pullPolicy: IfNotPresent
+  pullPolicy: Always
 
 imagePullSecrets: []
 nameOverride: ""
@@ -17,6 +17,9 @@ service:
   type: LoadBalancer
   internalPort: 3000
   externalPort: 80
+
+database:
+  migrationStrategy: initContainer
 
 ## Configuration values for the postgresql dependency.
 ## ref: https://github.com/kubernetes/charts/blob/master/stable/postgresql/README.md
