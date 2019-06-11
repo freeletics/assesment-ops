@@ -1,6 +1,6 @@
 diff -drHuN kubernetes.old/charts/app-test/templates/configmap.yaml kubernetes/charts/app-test/templates/configmap.yaml
 --- kubernetes.old/charts/app-test/templates/configmap.yaml	1970-01-01 02:00:00.000000000 +0200
-+++ kubernetes/charts/app-test/templates/configmap.yaml	2019-06-11 17:46:27.000000000 +0300
++++ kubernetes/charts/app-test/templates/configmap.yaml	2019-06-11 21:20:38.000000000 +0300
 @@ -0,0 +1,30 @@
 +apiVersion: v1
 +kind: ConfigMap
@@ -33,9 +33,17 @@ diff -drHuN kubernetes.old/charts/app-test/templates/configmap.yaml kubernetes/c
 +      <<: *default
 +      database: gorgeous-code_production
 diff -drHuN kubernetes.old/charts/app-test/templates/db-ops.yaml kubernetes/charts/app-test/templates/db-ops.yaml
---- kubernetes.old/charts/app-test/templates/db-ops.yaml	2019-06-11 17:47:36.000000000 +0300
-+++ kubernetes/charts/app-test/templates/db-ops.yaml	2019-06-11 17:53:30.000000000 +0300
-@@ -21,6 +21,10 @@
+--- kubernetes.old/charts/app-test/templates/db-ops.yaml	2019-06-11 21:24:57.000000000 +0300
++++ kubernetes/charts/app-test/templates/db-ops.yaml	2019-06-11 21:25:46.000000000 +0300
+@@ -5,6 +5,7 @@
+   namespace: freeletics
+   annotations:
+     helm.sh/hook: pre-install
++    helm.sh/hook-weight: "2"
+     helm.sh/hook-delete-policy: hook-succeeded
+ spec:
+   activeDeadlineSeconds: 40
+@@ -20,6 +21,10 @@
            - '-c'
          args:
            - rake db:create; sleep 1s; rake db:migrate
@@ -46,7 +54,7 @@ diff -drHuN kubernetes.old/charts/app-test/templates/db-ops.yaml kubernetes/char
          env:
            - name: DEVISE_SECRET
              valueFrom:
-@@ -41,3 +45,7 @@
+@@ -40,3 +45,7 @@
              value: {{ .Values.pgservice }}.{{ .Release.Namespace }}.svc.cluster.local
            - name: RAILS_ENV
              value: {{ .Values.environment }}
@@ -55,8 +63,8 @@ diff -drHuN kubernetes.old/charts/app-test/templates/db-ops.yaml kubernetes/char
 +          configMap:
 +            name: database-config
 diff -drHuN kubernetes.old/charts/app-test/templates/deployment.yaml kubernetes/charts/app-test/templates/deployment.yaml
---- kubernetes.old/charts/app-test/templates/deployment.yaml	2019-06-11 17:47:36.000000000 +0300
-+++ kubernetes/charts/app-test/templates/deployment.yaml	2019-06-11 17:52:33.000000000 +0300
+--- kubernetes.old/charts/app-test/templates/deployment.yaml	2019-06-11 21:20:22.000000000 +0300
++++ kubernetes/charts/app-test/templates/deployment.yaml	2019-06-11 21:20:38.000000000 +0300
 @@ -37,6 +37,10 @@
              - 'server'
              - '-b'
@@ -76,85 +84,3 @@ diff -drHuN kubernetes.old/charts/app-test/templates/deployment.yaml kubernetes/
 +        - name: dbconf
 +          configMap:
 +            name: database-config
-diff -drHuN kubernetes.old/patch-database-yml-configmap kubernetes/patch-database-yml-configmap
---- kubernetes.old/patch-database-yml-configmap	1970-01-01 02:00:00.000000000 +0200
-+++ kubernetes/patch-database-yml-configmap	2019-06-11 17:54:20.000000000 +0300
-@@ -0,0 +1,78 @@
-+diff -drHuN kubernetes.old/charts/app-test/templates/configmap.yaml kubernetes/charts/app-test/templates/configmap.yaml
-+--- kubernetes.old/charts/app-test/templates/configmap.yaml	1970-01-01 02:00:00.000000000 +0200
-++++ kubernetes/charts/app-test/templates/configmap.yaml	2019-06-11 17:46:27.000000000 +0300
-+@@ -0,0 +1,30 @@
-++apiVersion: v1
-++kind: ConfigMap
-++metadata:
-++  name: database-config
-++  namespace: freeletics
-++  annotations:
-++    helm.sh/hook: pre-install
-++    helm.sh/hook-weight: "1"
-++data:
-++  database.yml: |
-++    default: &default
-++      adapter: postgresql
-++      host: <%= ENV['DBHOST'] %>
-++      endcoding: utf8
-++      pool: 5
-++      timeout: 5000
-++      username: <%= ENV['DBUSER'] %>
-++      password: <%= ENV['DBPASS'] %>
-++
-++    development:
-++      <<: *default
-++      database: gorgeous-code_development
-++
-++    test:
-++      <<: *default
-++      database: gorgeous-code_test
-++
-++    production:
-++      <<: *default
-++      database: gorgeous-code_production
-+diff -drHuN kubernetes.old/charts/app-test/templates/db-ops.yaml kubernetes/charts/app-test/templates/db-ops.yaml
-+--- kubernetes.old/charts/app-test/templates/db-ops.yaml	2019-06-11 17:47:36.000000000 +0300
-++++ kubernetes/charts/app-test/templates/db-ops.yaml	2019-06-11 17:53:30.000000000 +0300
-+@@ -21,6 +21,10 @@
-+           - '-c'
-+         args:
-+           - rake db:create; sleep 1s; rake db:migrate
-++        volumeMounts:
-++        - name: dbconf
-++          mountPath: /app/config/database.yml
-++          subPath: database.yml
-+         env:
-+           - name: DEVISE_SECRET
-+             valueFrom:
-+@@ -41,3 +45,7 @@
-+             value: {{ .Values.pgservice }}.{{ .Release.Namespace }}.svc.cluster.local
-+           - name: RAILS_ENV
-+             value: {{ .Values.environment }}
-++      volumes:
-++        - name: dbconf
-++          configMap:
-++            name: database-config
-+diff -drHuN kubernetes.old/charts/app-test/templates/deployment.yaml kubernetes/charts/app-test/templates/deployment.yaml
-+--- kubernetes.old/charts/app-test/templates/deployment.yaml	2019-06-11 17:47:36.000000000 +0300
-++++ kubernetes/charts/app-test/templates/deployment.yaml	2019-06-11 17:52:33.000000000 +0300
-+@@ -37,6 +37,10 @@
-+             - 'server'
-+             - '-b'
-+             - '0.0.0.0'
-++          volumeMounts:
-++          - name: dbconf
-++            mountPath: /app/config/database.yml
-++            subPath: database.yml
-+           env:
-+             - name: DEVISE_SECRET
-+               valueFrom:
-+@@ -57,3 +61,7 @@
-+               value: {{ .Values.pgservice }}.freeletics.svc.cluster.local
-+             - name: RAILS_ENV
-+               value: {{ .Values.environment }}
-++      volumes:
-++        - name: dbconf
-++          configMap:
-++            name: database-config
