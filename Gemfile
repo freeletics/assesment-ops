@@ -1,6 +1,6 @@
 source "https://rubygems.org"
 
-ruby "2.5.0"
+ruby "2.5.5"
 
 gem 'rails', '>= 5.2.0.rc2'
 gem 'activeadmin'
@@ -22,7 +22,8 @@ gem "rails_best_practices-gorgeouscode", require: "rails_best_practices"
 gem "octokit", "~> 4.1", ">= 4.1.1"
 gem "sidekiq"
 gem "daemons"
-
+gem "tzinfo-data"
+gem 'dotenv-rails'
 gem "byebug"
 
 group :development, :test do
