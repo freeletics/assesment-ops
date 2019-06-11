@@ -1,0 +1,13 @@
+FROM ruby:2.5.5-alpine3.9
+RUN apk add libc-dev \
+        g++ \
+        git \
+        gcc \
+        postgresql-dev \
+        make \
+        ruby-dev \
+        nodejs
+RUN mkdir /app
+COPY Gemfile Gemfile.lock /app/
+WORKDIR /app
+RUN bundle install

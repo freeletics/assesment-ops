@@ -1,0 +1,20 @@
+default: &default
+  adapter: postgresql
+  host: <%= ENV['DBHOST'] %>
+  endcoding: utf8
+  pool: 5
+  timeout: 5000
+  username: <%= ENV['DBUSER'] %>
+  password: <%= ENV['DBPASS'] %>
+
+development:
+  <<: *default
+  database: gorgeous-code_development
+
+test:
+  <<: *default
+  database: gorgeous-code_test
+
+production:
+  <<: *default
+  database: gorgeous-code_production

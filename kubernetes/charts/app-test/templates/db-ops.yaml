@@ -1,0 +1,42 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: db-ops
+  namespace: freeletics
+  annotations:
+    helm.sh/hook: pre-install
+    helm.sh/hook-delete-policy: hook-succeeded
+spec:
+  activeDeadlineSeconds: 40
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+      - name: db-create-migrate
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        command:
+          - '/bin/sh'
+          - '-c'
+        args:
+          - rake db:create; sleep 1s; rake db:migrate
+        env:
+          - name: DEVISE_SECRET
+            valueFrom:
+              secretKeyRef:
+                name: flapp-secrets
+                key: devise_secret
+          - name: DBUSER
+            valueFrom:
+              secretKeyRef:
+                name: flapp-secrets
+                key: postgresql-user
+          - name: DBPASS
+            valueFrom:
+              secretKeyRef:
+                name: flapp-secrets
+                key: postgresql-password
+          - name: DBHOST
+            value: {{ .Values.pgservice }}.{{ .Release.Namespace }}.svc.cluster.local
+          - name: RAILS_ENV
+            value: {{ .Values.environment }}

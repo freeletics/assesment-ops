@@ -1,0 +1,12 @@
+
+To access the application:
+
+  minikube service {{ .Values.service.name }} -n {{ .Release.Namespace }}
+
+      or, in case a browser doesn't open, paste the result into a browser window:
+
+  IP=$(minikube ip)
+
+  NODEPORT=$(kubectl get service {{ .Values.service.name }}  -o jsonpath="{.spec.ports[0].nodePort}" -n {{ .Release.Namespace }})
+
+  echo "http://$IP:$NODEPORT"

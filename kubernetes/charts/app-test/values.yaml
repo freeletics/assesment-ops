@@ -1,0 +1,9 @@
+environment: development
+replicaCount: 2
+pgservice: pg-database
+image:
+  repository: freeletics-app
+  tag: latest
+  pullPolicy: Never
+service:
+  name: freeletics-svc

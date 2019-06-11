@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: freeletics-app
+  namespace: freeletics
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: freeletics-app
+  template:
+    metadata:
+      labels:
+        app: freeletics-app
+    spec:
+      containers:
+        - name: freeletics-web
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: flport
+              containerPort: 3000
+              protocol: TCP
+          readinessProbe:
+            tcpSocket:
+              port: 3000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            tcpSocket:
+              port: 3000
+            initialDelaySeconds: 15
+            periodSeconds: 20
+          command:
+            - rails
+          args:
+            - 'server'
+            - '-b'
+            - '0.0.0.0'
+          env:
+            - name: DEVISE_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: flapp-secrets
+                  key: devise_secret
+            - name: DBUSER
+              valueFrom:
+                secretKeyRef:
+                  name: flapp-secrets
+                  key: postgresql-user
+            - name: DBPASS
+              valueFrom:
+                secretKeyRef:
+                  name: flapp-secrets
+                  key: postgresql-password
+            - name: DBHOST
+              value: {{ .Values.pgservice }}.freeletics.svc.cluster.local
+            - name: RAILS_ENV
+              value: {{ .Values.environment }}
