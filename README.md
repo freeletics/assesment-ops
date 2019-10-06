@@ -63,10 +63,10 @@ Regarding this code....
 - use `persistent volumes` and `persistent volume claim` objects for database pods. database pods could be handled by `statefulsets` provided database engine supports clustering.
 - Periodic snapshots to take backup especially before running any new migrations
 - DB pod will not be replaced during deployment unless it is killed externally
-- As part of deployment repo, a migration job should be run when application deployment happens. This should use same `image:latest` as application container
+- As part of deployment repo, a schema migration job should be run when application deployment happens. This should use same `image:latest` as application container
 
 ### application deployment:
-- Replace application container with rolling deployment strategy for e.g min of `x`x number of pods to be available while updating the deployment.
+- Replace application container with rolling deployment strategy for e.g min of `x` number of pods to be available while updating the deployment.
 
 ### data loss recovery/rollback:
 - restore volume from back up snapshots. create new `pv` and `pvc` objects. make changes in database deployment.yaml
