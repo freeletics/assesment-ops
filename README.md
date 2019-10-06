@@ -47,27 +47,30 @@ Regarding this code....
 
 # Deployment on Kubernetes
 
-## Getting code into container
+### Getting code into container
 1. `git clone` in Dockerfile with **single branch clone** is `option-1`. Git Credentials can be passed while building image using `mount paths` (sharing file paths) so that credentials are not left inside intermediate layers as well as with final image.
 2. To make sure `git clone` is not cached, echo `timestamp` to a temporary file before `git clone` in Dockerfile.
 3. `COPY . .` is `option-2`
 
-## Deployment Thoughts
+### build abd ship docker image
 1. Build Docker image for application when new changes are pushed to repository using webhooks to repository
 2. Push to Container Registry if using AWS or similar. Add two tags to the image to be deployed at the end of CI pipeline - `1. :vX.Y.Z` `2. :latest`
 [This is to know which version is deployed currently and to keep track of version history when it comes to rollback]
 3. Image policy is `PullAlways` with `image tag = latest` in `deployment.yaml`
 
+### Kubernetes Topology
+1. Each namespace represents an environment.
+2. Database and application deployments are exposed as `service` so that they can be resolved using `K8S DNS`
 
 ### database deployment:
-- use `persistent volumes` and `persistent volume claim` objects for database pods. database pods could be handled by `statefulsets` provided database engine supports clustering.
-- Periodic snapshots to take backup especially before running any new migrations
-- DB pod will not be replaced during deployment unless it is killed externally
-- As part of deployment repo, a schema migration job should be run when application deployment happens. This should use same `image:latest` as application container
+1. To persist data, one can use `persistent volumes` and `persistent volume claim` objects for database pods. The pods      could be handled by `statefulsets` with `volume claim templates`.
+2. Periodic snapshots to take backup especially before running any new migrations.
+3. DB pod will not be replaced during deployment unless it is killed externally. Only migration jobs will be run to         update the state of database.
+4. A schema migration `kubernetes job` should be run before application deployment happens. This should use same `image:latest` as application container
 
 ### application deployment:
-- Replace application container with rolling deployment strategy for e.g min of `x` number of pods to be available while updating the deployment.
+1. Replace application container with rolling deployment strategy for e.g min of `x` number of pods to be available while updating the deployment.
 
 ### data loss recovery/rollback:
-- restore volume from back up snapshots. create new `pv` and `pvc` objects. make changes in database deployment.yaml
-- Tag the previously deployed stable image as `latest` and roll out application `deployment.yaml`
+1. Restore volume from back up snapshots. Create new `pv` and `pvc` objects. Make changes in database deployment.yaml so    that pods will find the restored volume. This approach may not be suitable for all kinds of providers. Public cloud providers like AWS do support this approach. 
+2. Tag the previously deployed stable image as `latest` and roll out application `deployment.yaml`. Do not run migration    job this time.
