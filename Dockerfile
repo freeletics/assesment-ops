@@ -8,9 +8,9 @@ RUN apk add --no-cache --update \
   nodejs
 ARG RELEASE_BRANCH
 # this invalidates the cache so that git clone pulls latest code always!!
-# pass git credentials while building image
 RUN echo $(date) > time.txt
+# pass git credentials while building image
 RUN git clone https://github.com/freeletics/test-ops.git --branch $RELEASE_BRANCH --single-branch
-#COPY . .
+# COPY . .
 RUN bundle install
 CMD rails server -b 0.0.0.0
