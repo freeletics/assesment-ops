@@ -44,3 +44,30 @@ Regarding this code....
 ## Installation and other notes
 * If you have errors with the gem `eventmachine` maybe this solution helps <https://stackoverflow.com/questions/30818391/gem-eventmachine-fatal-error-openssl-ssl-h-file-not-found>
 * Check if you "/usr/locpsql -U postgres -h localhost" works, the gc.yml from the projects will probably create databases
+
+# Deployment on Kubernetes
+
+## Getting code into container
+1. `git clone` in Dockerfile with **single branch clone** is `option-1`. Git Credentials can be passed while building image using `mount paths` (sharing file paths) so that credentials are not left inside intermediate layers as well as with final image.
+2. To make sure `git clone` is not cached, echo `timestamp` to a temporary file before `git clone` in Dockerfile.
+3. `COPY . .` is `option-2`
+
+## Deployment Thoughts
+1. Build Docker image for application when new changes are pushed to repository using webhooks to repository
+2. Push to Container Registry if using AWS or similar. Add two tags to the image to be deployed at the end of CI pipeline - `1. :vX.Y.Z` `2. :latest`
+[This is to know which version is deployed currently and to keep track of version history when it comes to rollback]
+3. Image policy is `PullAlways` with `image tag = latest` in `deployment.yaml`
+
+
+### database deployment:
+- use `persistent volumes` and `persistent volume claim` objects for database pods. database pods could be handled by `statefulsets` provided database engine supports clustering.
+- Periodic snapshots to take backup especially before running any new migrations
+- DB pod will not be replaced during deployment unless it is killed externally
+- As part of deployment repo, a migration job should be run when application deployment happens. This should use same `image:latest` as application container
+
+### application deployment:
+- Replace application container with rolling deployment strategy for e.g min of `x`x number of pods to be available while updating the deployment.
+
+### data loss recovery/rollback:
+- restore volume from back up snapshots. create new `pv` and `pvc` objects. make changes in database deployment.yaml
+- Tag the previously deployed stable image as `latest` and roll out application `deployment.yaml`
