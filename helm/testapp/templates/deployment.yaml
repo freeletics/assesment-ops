@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "testapp.fullname" . }}
+  namespace: {{ .Values.environment }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "testapp.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ include "testapp.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+    spec:
+      containers:
+      - name: {{ .Chart.Name }}
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        command: ["/bin/sh"]
+        args: ["-c", "rails server -b 0.0.0.0"]
+        ports:
+        - name: http
+          containerPort: 3000
+          protocol: TCP
+        env:
+          - name: DEVISE_SECRET
+            valueFrom:
+              secretKeyRef:
+                name: app-secrets
+                key: devise_secret
+          - name: POSTGRES_USER
+            valueFrom:
+              secretKeyRef:
+                name: app-secrets
+                key: postgres_user
+          - name: POSTGRES_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: app-secrets
+                key: postgres_password
+          - name: POSTGRES_HOST
+            value: {{ .Values.postgres }}.{{ .Values.environment }}.svc.cluster.local
+          - name: RAILS_ENV
+            value: {{ .Values.environment }}

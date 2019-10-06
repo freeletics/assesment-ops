@@ -1,0 +1,12 @@
+replicaCount: 1
+
+image:
+  repository: shadjachaudhari/mydemo
+  tag: latest
+  pullPolicy: Always
+
+service:
+  type: NodePort
+  port: 80
+postgres: postgres
+environment: test

@@ -1,0 +1,10 @@
+replicaCount: 1
+environment: test
+image:
+  repository: postgres
+  tag: 9.6
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 80
