@@ -1,3 +1,103 @@
+# Introcuction
+test-ops is an application ment to ... based on Ruby on Rails.
+Ruby on Rails, or simply Rails, is a web application framework written in Ruby under MIT License. Rails is a model–view–controller (MVC) framework, providing default structures for a database, a web service, and web pages.
+
+The application will be packaged in docker and runned in a Kubernetes clusters that runs on top of AWS.
+
+The Database and the Redis cache used by this application will not be managed in this, they are part of the managed service of AWS.
+
+## Run the application localy
+[HERE SOME DETAILS HOW TO DO THAT]
+
+
+# Packaging the application
+The application will run using [docker](https://www.docker.com/). Docker will allow to run the application on any docker environment.
+
+## Building the docker image
+In order to build the image that will contain the application the following command needs to be executed:
+```
+docker build . -t test-ops
+```
+Alternatively you can run the same command usign the Makefile
+```
+make docker.build
+```
+
+## Runing the application in docker locally
+In order to test the application running inside docker. You can use the [docker-compose](https://docs.docker.com/compose/) file that is embedded to this repo.
+```
+docker-compose up -d
+```
+or using the Makefile
+```
+make docker.run-compose
+```
+
+# Pushing the image to the registy
+Once the docker image has been tested and fully functionnal, this image will be pushed to the registry where all other versions of this image will be pushed.
+**NOTE:**
+I a normal application I would decouple the application and the elements to deploy this application in to production in different git repositories.
+**ASSUMPTIONS:**
+We will take the version number of the application a v1.0.1
+
+push the image to the registy
+```
+docker tag test-ops my-ecr-registry.amazonaws.com/test-ops:v1.0.1
+docker push my-ecr-registry.amazonaws.com/test-ops:v1.0.1
+```
+or using the Makefile
+```
+make docker.push-registry
+```
+
+# Application deployment
+## How to deploy test-ops in Kubernetes
+Deploying test-ops application as Helm is the easiest to have production grade deployments on Kubernetes.
+
+Helm will act as application management framework, all updates to the application will be handeled by Helm.
+
+The kubernetes application specifics will be define using [Helm Charts](https://github.com/helm/charts)
+
+For development purposes you can use [minikube](https://kubernetes.io/docs/setup/learning-environment/minikube/)
+
+## Installing the chart for the first time
+To run helm to setup the chart you can run the following command:
+
+```
+helm install --set image.tag=v1.0.1 --name freeletics test-ops-k8s-app
+```
+or use the Makefile
+```
+make helm.deploy
+```
+
+## Verify that the application is running:
+Just run `helm status freeletics`
+
+## Update an existing deployment
+If the application was already running, you can upgrade it by running the following commands:
+```
+helm upgrade freeletics test-ops-k8s-app
+```
+or by just running the Makefile command:
+```
+make helm.upgrade
+```
+
+# Conclusion
+Improvments:
+- Having a Jenkins pipeline that run the deployment of the application
+- Having the application that automatically scales according to some metrics
+- Use config maps and helm secrets for the Helm Chart
+- Use ingress controllers and AWS ALB to reduce costs
+
+# Freeletics test thoughts
+Most of the code provided was untested, I don't have access to my computer. It is juste an idea how to do it. Furthermore, I will improve the deployment and add some test uses cases before deploying to production. I would use a differents kubernetes clusters to run the tests.
+
+
+
+
+
 Gorgeous Code Assessment Test Operations
 =======
 This repo is ment to be as permanent work in progress.
