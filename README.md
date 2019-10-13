@@ -88,8 +88,14 @@ make helm.upgrade
 Improvments:
 - Having a Jenkins pipeline that run the deployment of the application
 - Having the application that automatically scales according to some metrics
-- Use config maps and helm secrets for the Helm Chart
+- Use config maps for the database configuration on the helm chart
+- Use helm secrets for the password of the database
+- Add a new template for the Service accout of the test-ops APP
+- Add some network policies if necessary depending on the context
 - Use ingress controllers and AWS ALB to reduce costs
+- Update the ruby code to be able to use global environment variables for the database and redis configuration
+- In the docker file set a more relevant healthcheck
+
 
 # Freeletics test thoughts
 Most of the code provided was untested, I don't have access to my computer. It is juste an idea how to do it. Furthermore, I will improve the deployment and add some test uses cases before deploying to production. I would use a differents kubernetes clusters to run the tests.

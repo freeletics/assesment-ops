@@ -34,9 +34,11 @@ HEALTHCHECK --interval=1m --timeout=3s \
   CMD curl -f http://localhost:3000/ || exit 1
 
 #NOT Implemented
-ENV DATABASE_URL rds.endpoint
+ENV DATABASE_URL change.me.db.endpoint
 ENV DATABASE_USER ror-user
 ENV DATABASE_PASSWORD pass
+ENV REDIS_ENDPOINT change.me.redis.endpoint
+
 
 ENTRYPOINT ["bundle", "exec"]
 
