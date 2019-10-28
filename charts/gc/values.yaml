@@ -1,0 +1,30 @@
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+resources: 
+  limits:
+    cpu: 200m
+    memory: 256Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi
+
+image:
+  repository: gc
+  tag: 0.0.1
+  pullPolicy: Never
+
+service:
+  port: 80
+  type: "NodePort"
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+
+

@@ -44,3 +44,66 @@ Regarding this code....
 ## Installation and other notes
 * If you have errors with the gem `eventmachine` maybe this solution helps <https://stackoverflow.com/questions/30818391/gem-eventmachine-fatal-error-openssl-ssl-h-file-not-found>
 * Check if you "/usr/locpsql -U postgres -h localhost" works, the gc.yml from the projects will probably create databases
+
+
+## Basic deployment checklist
+
+[] get Amazon Aurora with PostgreSQL credentials 
+
+https://console.aws.amazon.com/rds/
+
+* https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/Aurora.CreateInstance.html
+
+[] check minickube and helm installation
+
+```sh
+minikube status
+kubectl cluster-info
+kubectl --namespace kube-system get pods | grep tiller
+```
+
+[] setup secrets
+
+```sh
+SECRET_KEY_BASE=$(dd if=/dev/urandom bs=100 count=1 2>/dev/null | base64 | head -c 64)
+DATABASE_HOST=mycluster.cluster-2128500.eu-west-1.rds.amazonaws.com
+DATABASE_PORT=5432
+GC_DATABASE=gc
+GC_DATABASE_USERNAME=gc-database
+GC_DATABASE_PASSWORD=gc-database-password
+
+kubectl create secret generic gc-secrets \
+--from-literal=gc-secret-key-base=postgres \
+--from-literal=gc-database-host=${DATABASE_HOST} \
+--from-literal=gc-database-port=${DATABASE_PORT} \
+--from-literal=gc-database=${GC_DATABASE} \
+--from-literal=gc-database-username=${GC_DATABASE_USERNAME} \
+--from-literal=gc-database-password=${GC_DATABASE_PASSWORD}
+
+```
+
+[] build container
+
+```sh
+eval $(minikube docker-env)
+docker build -t gc:minikube .
+```
+
+[] install chart
+
+```sh
+cd charts/gc/
+helm install . 
+```
+[] migrate database schema
+
+```sh
+kubectl exec -it gc-pod sh
+bundle exec rake db:migrate
+```
+
+[] enjoy :)
+
+```sh
+kubectl port-forward gc-pod 80:80
+```

@@ -1,0 +1,8 @@
+charts/
+README.md
+
+Dockerfile*
+.dockerignore
+.git/
+.gitignore
+.gitmodules

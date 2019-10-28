@@ -1,0 +1,8 @@
+language: ruby
+rvm:
+  - 2.2.1
+model_styles:
+  User:
+    style: filled
+    fillcolor: "#000000"
+    fontcolor: "#FFFFFF"

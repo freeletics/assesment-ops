@@ -1,0 +1,114 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "gc.fullname" . }}
+  labels:
+    app: {{ template "gc.name" . }}
+    chart: {{ template "gc.chart" . }}
+    release: {{ .Release.Name | quote }}
+    heritage: {{ .Release.Service | quote }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  strategy: {{ toYaml .Values.updateStrategy | nindent 4 }}
+  selector:
+    matchLabels:
+      app: {{ template "gc.name" . }}
+      release: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ template "gc.name" . }}
+        release: {{ .Release.Name }}
+
+    spec:
+      securityContext:
+        fsGroup: 10001
+        runAsGroup: 10001
+        runAsNonRoot: true
+        runAsUser: 10001
+
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: 3000
+              protocol: TCP
+
+          volumeMounts:
+            - name: logs
+              mountPath: "/app/log"
+
+          env:
+            - name: SECRET_KEY_BASE
+              valueFrom:
+                secretKeyRef:
+                  name: gc-secrets
+                  key: gc-secret-key-base
+
+            - name: DATABASE_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: gc-secrets
+                  key: gc-database-host
+
+            - name: DATABASE_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: gc-secrets
+                  key: gc-database-port
+
+            - name: GC_DATABASE
+              valueFrom:
+                secretKeyRef:
+                  name: gc-secrets
+                  key: gc-database
+
+            - name: GC_DATABASE_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: gc-secrets
+                  key: gc-database-username
+
+            - name: GC_DATABASE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: gc-secrets
+                  key: gc-database-password 
+
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http-metrics
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            successThreshold: 1
+            failureThreshold: 5
+            timeoutSeconds: 1
+
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+
+      terminationGracePeriodSeconds: 30
+      volumes:
+        - name: logs
+          emptyDir: {}
+
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

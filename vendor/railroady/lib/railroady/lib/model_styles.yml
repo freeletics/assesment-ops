@@ -1,0 +1,5 @@
+model_styles:
+  User:
+    style: filled
+    fillcolor: "#000000"
+    fontcolor: "#FFFFFF"
