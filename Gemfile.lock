@@ -225,7 +225,7 @@ GEM
     popper_js (1.12.9)
     progressbar (1.9.0)
     public_suffix (3.0.2)
-    rack (2.0.4)
+    rack (2.2.3)
     rack-protection (2.0.1)
       rack
     rack-test (1.0.0)
